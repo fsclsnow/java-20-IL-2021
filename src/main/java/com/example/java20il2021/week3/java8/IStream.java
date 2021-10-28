@@ -2,6 +2,7 @@ package com.example.java20il2021.week3.java8;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -32,18 +33,22 @@ public interface IStream<T> {
 
     IStream<T> filter(Predicate<T> predicate);
 
+    IStream<T> sorted(Comparator<T> cpt);
+
     <R> R collect(Supplier<R> supplier, BiConsumer<R, T> accumulator);
+
+
 }
 
 class TestIStream {
     public static void main(String[] args) {
         List<Integer> l = new ArrayList<>();
-        l.add(1);
-        l.add(2);
-        IStream<Integer> stream = IStream.of(l);
-        l.add(3);
         l.add(4);
-        List<String> ans = stream.map(x -> x * 2).filter(x -> x < 5).map(x -> String.valueOf(x)).collect(() -> new ArrayList(), (res, val) -> res.add(val));
+        l.add(3);
+        IStream<Integer> stream = IStream.of(l);
+        l.add(2);
+        l.add(1);
+        List<String> ans = stream.map(x -> x * 2).map(x -> String.valueOf(x)).sorted((v1, v2) -> v1.compareTo(v2)).collect(() -> new ArrayList(), (res, val) -> res.add(val));
         System.out.println(ans);
     }
 }

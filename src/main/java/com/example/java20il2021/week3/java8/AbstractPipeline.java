@@ -30,6 +30,7 @@ public abstract class AbstractPipeline<IN, OUT> implements IStream<OUT> {
         R collectionResult = supplier.get();
         ISink head = wrapSink(val -> accumulator.accept(collectionResult, val));
         Iterator<OUT> itr = this.sourceIterator.get();
+        head.begin(-1);
         while(itr.hasNext()) {
             OUT val = itr.next();
             System.out.println(val);

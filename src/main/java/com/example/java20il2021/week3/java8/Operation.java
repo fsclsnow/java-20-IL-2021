@@ -1,6 +1,7 @@
 package com.example.java20il2021.week3.java8;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -24,7 +25,7 @@ public class Operation<IN, OUT> extends AbstractPipeline<IN, OUT> {
 //                    R r = mapper.apply(val);
 //                    downstreamSink.accept(r);
 //                };
-                return new ISink<OUT>() {
+                return new ISink.ChainedSink<>(downstreamSink) {
                     @Override
                     public void accept(OUT val) {
                         R r = mapper.apply(val);
@@ -40,9 +41,12 @@ public class Operation<IN, OUT> extends AbstractPipeline<IN, OUT> {
         return new Operation<OUT, OUT>(this) {
             @Override
             ISink<OUT> onWrapSink(ISink<OUT> downstreamSink) {
-                return val -> {
-                    if(predicate.test(val)) {
-                        downstreamSink.accept(val);
+                return new ISink.ChainedSink<>(downstreamSink) {
+                    @Override
+                    public void accept(OUT val) {
+                        if(predicate.test(val)) {
+                            downstreamSink.accept(val);
+                        }
                     }
                 };
             }
@@ -54,4 +58,14 @@ public class Operation<IN, OUT> extends AbstractPipeline<IN, OUT> {
         throw new UnsupportedOperationException("need to be implemented");
     }
 
+
+    @Override
+    public IStream<OUT> sorted(Comparator<OUT> cpt) {
+        return new Operation<OUT, OUT>(this) {
+            @Override
+            ISink<OUT> onWrapSink(ISink<OUT> downstreamSink) {
+                return new SortedSink<OUT>(downstreamSink, cpt);
+            }
+        };
+    }
 }
