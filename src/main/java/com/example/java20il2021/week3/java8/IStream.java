@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  *  IStream.of(col) => op1 = new Operation()
@@ -37,7 +34,7 @@ public interface IStream<T> {
 
     <R> R collect(Supplier<R> supplier, BiConsumer<R, T> accumulator);
 
-
+    <E> E reduce(E e, BiFunction<T, E, E> operation);
 }
 
 class TestIStream {
@@ -48,10 +45,9 @@ class TestIStream {
         IStream<Integer> stream = IStream.of(l);
         l.add(2);
         l.add(1);
-        List<String> ans = stream.map(x -> x * 2).map(x -> String.valueOf(x)).sorted((v1, v2) -> v1.compareTo(v2)).collect(() -> new ArrayList(), (res, val) -> res.add(val));
-        System.out.println(ans);
+//        List<String> ans = stream.map(x -> x * 2).map(x -> String.valueOf(x)).sorted((v1, v2) -> v1.compareTo(v2)).collect(() -> new ArrayList(), (res, val) -> res.add(val));
+//        System.out.println(ans);
+        int v = stream.map(x -> x * 2).sorted((v1, v2) -> v1.compareTo(v2)).reduce(0, (res, val) -> res + val);
+        System.out.println(v);
     }
 }
-
-
-

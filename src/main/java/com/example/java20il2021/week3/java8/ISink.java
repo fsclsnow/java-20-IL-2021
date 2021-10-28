@@ -25,4 +25,12 @@ public interface ISink<T> {
             downstream.end();
         }
     }
+
+
+    abstract static class Box<T, E> implements ISink<T> {
+        E state;
+        public E get() {
+            return state;
+        }
+    }
 }

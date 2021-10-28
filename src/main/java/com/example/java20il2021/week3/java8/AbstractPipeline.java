@@ -3,6 +3,7 @@ package com.example.java20il2021.week3.java8;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -38,6 +39,31 @@ public abstract class AbstractPipeline<IN, OUT> implements IStream<OUT> {
         }
         head.end();
         return collectionResult;
+    }
+
+    @Override
+    public <E> E reduce(E e, BiFunction<OUT, E, E> operation) {
+        ISink.Box<OUT, E> reduceOP = new ISink.Box<>() {
+            @Override
+            public void begin(long size) {
+                state = e;
+            }
+
+            @Override
+            public void accept(OUT out) {
+                state = operation.apply(out, state);
+            }
+        };
+        ISink head = wrapSink(reduceOP);
+        Iterator<OUT> itr = this.sourceIterator.get();
+        head.begin(-1);
+        while(itr.hasNext()) {
+            OUT val = itr.next();
+            System.out.println(val);
+            head.accept(val);
+        }
+        head.end();
+        return reduceOP.get();
     }
 
     /**
