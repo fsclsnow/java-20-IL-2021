@@ -108,12 +108,17 @@ class Employee {
 interface OperationStrategy<T, R> {
     R operate(T t);
 }
-interface AddStrategy extends OperationStrategy{ }
-interface MinusStrategy extends OperationStrategy{ }
+interface AddStrategy<T, R> extends OperationStrategy<T, R>{ }
+interface MinusStrategy<T, R> extends OperationStrategy<T, R>{ }
 
 class CalculatorImp1<T> {
     private OperationStrategy<T, ?> op;
+
+    public CalculatorImp1() {
+    }
+
     public <R> R calculate(T val, OperationStrategy<T, R> op) {
+
         return op.operate(val);
     }
 
@@ -124,7 +129,14 @@ class CalculatorImp1<T> {
     void opSetter(OperationStrategy<T, ?> op) {
         this.op = op;
     }
+
+    public static void main(String[] args) {
+        OperationStrategy<Integer, Integer> s = (v1) -> v1 + 5;
+        CalculatorImp1<Integer> c1 = new CalculatorImp1<>();
+        Integer res = c1.calculate(5, s);
+    }
 }
+
 
 
 /**
@@ -136,7 +148,6 @@ class CalculatorImp2<T> {
     public CalculatorImp2(OperationStrategy<T, ?> op) {
         this.op = op;
     }
-
     <R> R calculate(T val) {
         return (R) this.op.operate(val);
     }
