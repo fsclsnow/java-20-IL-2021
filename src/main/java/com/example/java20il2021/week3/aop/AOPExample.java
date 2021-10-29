@@ -140,3 +140,29 @@ class EmployeeAspect {
  *
  *   ...
  */
+
+class Person {
+    private final String name;
+    private int age;
+    public Person(String name, PersonBuilder personBuilder) {
+        this.name = name;
+    }
+
+    public Person setAge(int age) {
+        this.age = age;
+        return this;
+    }
+}
+
+class PersonBuilder {
+    private String name;
+
+    public PersonBuilder setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Person build() {
+        return new Person(this.name, this);
+    }
+}

@@ -68,4 +68,14 @@ public class Operation<IN, OUT> extends AbstractPipeline<IN, OUT> {
             }
         };
     }
+
+    @Override
+    public IStream<OUT> sorted() {
+        return new Operation<OUT, OUT>(this) {
+            @Override
+            ISink<OUT> onWrapSink(ISink<OUT> downstreamSink) {
+                return new SortedSink<OUT>(downstreamSink, null);
+            }
+        };
+    }
 }

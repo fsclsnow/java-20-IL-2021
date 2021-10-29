@@ -32,6 +32,8 @@ public interface IStream<T> {
 
     IStream<T> sorted(Comparator<T> cpt);
 
+    IStream<T> sorted();
+
     <R> R collect(Supplier<R> supplier, BiConsumer<R, T> accumulator);
 
     <E> E reduce(E e, BiFunction<T, E, E> operation);
@@ -45,9 +47,9 @@ class TestIStream {
         IStream<Integer> stream = IStream.of(l);
         l.add(2);
         l.add(1);
-//        List<String> ans = stream.map(x -> x * 2).map(x -> String.valueOf(x)).sorted((v1, v2) -> v1.compareTo(v2)).collect(() -> new ArrayList(), (res, val) -> res.add(val));
-//        System.out.println(ans);
-        int v = stream.map(x -> x * 2).sorted((v1, v2) -> v1.compareTo(v2)).reduce(0, (res, val) -> res + val);
-        System.out.println(v);
+        List<String> ans = stream.map(x -> x * 2).map(x -> String.valueOf(x)).sorted().collect(() -> new ArrayList(), (res, val) -> res.add(val));
+        System.out.println(ans);
+//        int v = stream.map(x -> x * 2).sorted((v1, v2) -> v1.compareTo(v2)).reduce(0, (res, val) -> res + val);
+//        System.out.println(v);
     }
 }
