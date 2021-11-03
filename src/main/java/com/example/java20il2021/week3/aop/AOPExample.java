@@ -3,8 +3,12 @@ package com.example.java20il2021.week3.aop;
 import com.example.java20il2021.week3.aop.advice.After;
 import com.example.java20il2021.week3.aop.advice.Around;
 import com.example.java20il2021.week3.aop.advice.Before;
+import com.example.java20il2021.week3.aop.interceptor.MethodInterceptor;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
+import java.util.Map;
 
 /**
  *      interface EmployeeService {
@@ -40,12 +44,21 @@ import java.lang.reflect.Proxy;
  *          for loop interceptors
  *
  */
+class AdvisedSupport {
+    private Map<Method, List<MethodInterceptor>> methodListMap;
+
+    public List<MethodInterceptor> getInterceptors(Method method) {
+        return methodListMap.get(method);
+    }
+}
 public class AOPExample {
+
     public static void main(String[] args) {
+        AdvisedSupport advisedSupport = null;
         EmployeeService es = (EmployeeService) Proxy.newProxyInstance(
                 AOPExample.class.getClassLoader(),
                 new Class[]{EmployeeService.class},
-                new JdkAOPInvocationHandler(new EmployeeServiceImpl1(), new EmployeeAspect())
+                new JdkAOPInvocationHandler(new EmployeeServiceImpl1(), advisedSupport)
         );
         int val = es.get();
         System.out.println(val);
@@ -164,5 +177,19 @@ class PersonBuilder {
 
     public Person build() {
         return new Person(this.name, this);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(PersonBuilder.class.getDeclaredMethods()[0]);
+    }
+}
+
+interface A1 {
+    void get();
+}
+class A1impl implements A1 {
+    @Override
+    public void get() {
+
     }
 }

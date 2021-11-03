@@ -18,31 +18,31 @@ import java.util.List;
 public class JdkAOPInvocationHandler implements InvocationHandler {
 
     private Object originObj;
-    private Object aspectObj;
+    private AdvisedSupport advisedSupport;
 
-    public JdkAOPInvocationHandler(Object originObj, Object aspectObj) {
+    public JdkAOPInvocationHandler(Object originObj, AdvisedSupport advisedSupport) {
         this.originObj = originObj;
-        this.aspectObj = aspectObj;
+        this.advisedSupport = advisedSupport;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Class<?> aspectClass = aspectObj.getClass();
-        List<MethodInterceptor> interceptors = new ArrayList<>();
-        for(Method aspectMethod: aspectClass.getDeclaredMethods()) {
-            for(Annotation ano: aspectMethod.getDeclaredAnnotations()) {
-                MethodInterceptor methodInterceptor = null;
-                if(ano.annotationType() == Before.class) {
-                    methodInterceptor = new BeforeMethodInterceptor(aspectObj, aspectMethod);
-                } else if(ano.annotationType() == After.class) {
-                    methodInterceptor = new AfterMethodInterceptor(aspectObj, aspectMethod);
-                } else if(ano.annotationType() == Around.class) {
-                    methodInterceptor = new AroundMethodInterceptor(aspectObj, aspectMethod);
-                }
-                interceptors.add(methodInterceptor);
-            }
-        }
-        MethodInvocation mi = new ProxyMethodInvocation(interceptors, originObj, method, args);
+//        Class<?> aspectClass = aspectObj.getClass();
+//        List<MethodInterceptor> interceptors = new ArrayList<>();
+//        for(Method aspectMethod: aspectClass.getDeclaredMethods()) {
+//            for(Annotation ano: aspectMethod.getDeclaredAnnotations()) {
+//                MethodInterceptor methodInterceptor = null;
+//                if(ano.annotationType() == Before.class) {
+//                    methodInterceptor = new BeforeMethodInterceptor(aspectObj, aspectMethod);
+//                } else if(ano.annotationType() == After.class) {
+//                    methodInterceptor = new AfterMethodInterceptor(aspectObj, aspectMethod);
+//                } else if(ano.annotationType() == Around.class) {
+//                    methodInterceptor = new AroundMethodInterceptor(aspectObj, aspectMethod);
+//                }
+//                interceptors.add(methodInterceptor);
+//            }
+//        }
+        MethodInvocation mi = new ProxyMethodInvocation(advisedSupport.getInterceptors(method), originObj, method, args);
         return mi.proceed();
     }
 }
