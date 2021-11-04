@@ -67,3 +67,20 @@ package com.example.java20il2021.week4;
  *      spring MVC
  *      filter vs interceptor
  */
+
+import java.lang.annotation.*;
+
+@PointCut(value = {TestDay17.class, String.class})
+class TestDay17 {
+    public static void main(String[] args) {
+        PointCut annotation = (PointCut)TestDay17.class.getDeclaredAnnotations()[0];
+        System.out.println(annotation.value());
+
+    }
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@interface PointCut {
+    Class<?>[] value();
+}
